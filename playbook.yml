@@ -1,0 +1,25 @@
+---
+- hosts: all
+  handlers:
+    - name: restart telegraf
+      service:
+        name: telegraf
+        state: restarted
+        daemon_reload: true
+        enabled: true
+      become: true
+
+  tasks:
+    - name: copy telegraf main template
+      ansible.builtin.template:
+        src: templates/telegraf.j2
+        dest: /etc/telegraf/telegraf.conf
+      become: true
+      notify: restart telegraf
+    
+    - name: copy ping template
+      ansible.builtin.template:
+        src: templates/ping.j2
+        dest: /etc/telegraf/telegraf.d/ping.conf
+      become: true
+      notify: restart telegraf
